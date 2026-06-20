@@ -1,6 +1,11 @@
 # Environment
 .env
 .env.local
+app/.env.local
+
+# Claude Code local settings (contains secrets)
+.claude/settings.local.json
+.mcp.json
 
 # Downloaded PDFs (large files)
 pdfs/

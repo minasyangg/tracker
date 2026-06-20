@@ -1,0 +1,15 @@
+{
+  "enableAllProjectMcpServers": true,
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npx *)",
+      "Bash(python scripts/*)",
+      "Bash(git *)",
+      "Bash(npm *)",
+      "Bash(npx vercel *)"
+    ]
+  }
+}
