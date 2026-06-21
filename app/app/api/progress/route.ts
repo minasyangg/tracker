@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export const dynamic = "force-dynamic";
+
+function getClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -19,6 +23,7 @@ export async function POST(req: NextRequest) {
     Object.entries(updates).filter(([k]) => allowed.includes(k))
   );
 
+  const supabase = getClient();
   const { data, error } = await supabase
     .from("progress")
     .upsert({ problem_id, ...filtered }, { onConflict: "problem_id" })
@@ -40,6 +45,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "problem_id required" }, { status: 400 });
   }
 
+  const supabase = getClient();
   const { data, error } = await supabase
     .from("progress")
     .select("*")

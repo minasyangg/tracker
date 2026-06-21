@@ -1,27 +1,16 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// SSR-safe browser client (use in Client Components)
+export function createClient() {
+  return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
 
-export type ProblemType =
-  | "algebra"
-  | "inequalities"
-  | "functions"
-  | "trigonometry"
-  | "planimetry"
-  | "stereometry"
-  | "combinatorics"
-  | "sequences"
-  | "word_problems"
-  | "unknown";
-
-export type ProgressStatus =
-  | "not_started"
-  | "in_progress"
-  | "solved"
-  | "needs_review";
+// Legacy singleton for Server Components / API routes that don't need cookies
+export const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export interface Problem {
   id: string;
@@ -51,6 +40,43 @@ export interface StatsByType {
   avg_score: number | null;
 }
 
+export interface Profile {
+  id: string;
+  full_name: string;
+  role: "teacher" | "student" | "admin";
+  grade: string | null;
+  is_active: boolean;
+  organization_id: string | null;
+}
+
+export type ProblemType =
+  | "algebra"
+  | "inequalities"
+  | "functions"
+  | "trigonometry"
+  | "planimetry"
+  | "stereometry"
+  | "combinatorics"
+  | "sequences"
+  | "word_problems"
+  | "unknown";
+
+export type ProgressStatus =
+  | "not_started"
+  | "in_progress"
+  | "solved"
+  | "needs_review";
+
+export const STATUS_CONFIG: Record<
+  ProgressStatus,
+  { label: string; color: string; icon: string }
+> = {
+  not_started: { label: "Не начата", color: "text-gray-400", icon: "○" },
+  in_progress: { label: "В процессе", color: "text-blue-500", icon: "◐" },
+  solved: { label: "Решена", color: "text-green-500", icon: "●" },
+  needs_review: { label: "Повторить", color: "text-amber-500", icon: "◑" },
+};
+
 export const TOPIC_LABELS: Record<ProblemType, string> = {
   algebra: "Алгебра",
   inequalities: "Неравенства",
@@ -75,14 +101,4 @@ export const TYPE_COLORS: Record<ProblemType, string> = {
   sequences: "bg-yellow-100 text-yellow-800 border-yellow-200",
   word_problems: "bg-red-100 text-red-800 border-red-200",
   unknown: "bg-gray-100 text-gray-800 border-gray-200",
-};
-
-export const STATUS_CONFIG: Record<
-  ProgressStatus,
-  { label: string; color: string; icon: string }
-> = {
-  not_started: { label: "Не начата", color: "text-gray-400", icon: "○" },
-  in_progress: { label: "В процессе", color: "text-blue-500", icon: "◐" },
-  solved: { label: "Решена", color: "text-green-500", icon: "●" },
-  needs_review: { label: "Повторить", color: "text-amber-500", icon: "◑" },
 };
