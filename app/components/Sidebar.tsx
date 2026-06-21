@@ -79,11 +79,11 @@ function NavItem({ href, label, icon }: { href: string; label: string; icon: Rea
       href={href}
       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
         isActive
-          ? "bg-blue-50 text-blue-700 font-medium"
-          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          ? "bg-blue-50 text-blue-700 font-semibold"
+          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
       }`}
     >
-      <span className={isActive ? "text-blue-600" : "text-gray-400"}>{icon}</span>
+      <span className={isActive ? "text-blue-600" : "text-gray-500"}>{icon}</span>
       {label}
     </Link>
   );
@@ -125,9 +125,9 @@ export function Sidebar() {
 
   return (
     <aside className="w-56 shrink-0 h-screen sticky top-0 flex flex-col bg-white border-r border-gray-200 overflow-y-auto">
-      <div className="px-4 py-5 border-b border-gray-100">
+      <div className="px-4 py-5 border-b border-gray-200">
         <p className="font-bold text-gray-900 text-sm leading-tight">ДВИ МГУ</p>
-        <p className="text-xs text-gray-400 mt-0.5">Математика · Трекер</p>
+        <p className="text-xs text-gray-600 mt-0.5">Математика · Трекер</p>
       </div>
 
       <nav className="flex-1 px-2 py-3 space-y-0.5">
@@ -151,14 +151,14 @@ export function Sidebar() {
         ) : profile ? (
           <div className="space-y-1">
             <div className="px-2 py-1.5">
-              <p className="text-xs font-medium text-gray-800 truncate">{profile.full_name}</p>
-              <p className="text-xs text-gray-400 mt-0.5">
+              <p className="text-xs font-semibold text-gray-900 truncate">{profile.full_name}</p>
+              <p className="text-xs text-gray-600 mt-0.5">
                 {profile.role === "teacher" || profile.role === "admin" ? "Учитель" : "Ученик"}
               </p>
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
+              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -169,7 +169,7 @@ export function Sidebar() {
         ) : (
           <Link
             href="/login"
-            className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-blue-600 hover:bg-blue-50 transition-colors font-medium"
+            className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-blue-700 hover:bg-blue-50 transition-colors font-semibold"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
