@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 
@@ -11,6 +12,7 @@ interface Stats {
 }
 
 export default function TeacherPage() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [stats, setStats] = useState<Stats | null>(null);
 
@@ -18,7 +20,7 @@ export default function TeacherPage() {
     const supabase = createClient();
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) { router.push("/login"); return; }
 
       const { data: profile } = await supabase
         .from("profiles")

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import dynamic from "next/dynamic";
@@ -30,6 +31,7 @@ interface LibProblem {
 type ProgressMap = Record<string, string>; // problem_id → status
 
 export default function StudentPage() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export default function StudentPage() {
     const supabase = createClient();
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) { router.push("/login"); return; }
 
       const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
       if (profile) setName(profile.full_name);

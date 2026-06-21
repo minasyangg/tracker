@@ -1,51 +1,11 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function proxy(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const { pathname } = request.nextUrl;
-
-  if ((pathname.startsWith("/teacher") || pathname.startsWith("/student")) && !user) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  if (pathname === "/login" && user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-    const dest = profile?.role === "student" ? "/student" : "/teacher";
-    return NextResponse.redirect(new URL(dest, request.url));
-  }
-
-  return supabaseResponse;
+// Auth is localStorage-based (supabase-js), so cookies carry no session.
+// Route protection is handled client-side in each page component.
+export async function proxy(_request: NextRequest) {
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/teacher/:path*", "/student/:path*"],
+  matcher: [],
 };

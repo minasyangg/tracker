@@ -1,15 +1,14 @@
-import { createBrowserClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-// SSR-safe browser client (use in Client Components)
+// Browser client — uses localStorage (no cookies, avoids non-ASCII header issues)
 export function createClient() {
-  return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
-// Legacy singleton for Server Components / API routes that don't need cookies
+// Singleton for Server Components / API routes
 export const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export interface Problem {

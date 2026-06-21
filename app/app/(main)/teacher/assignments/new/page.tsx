@@ -46,6 +46,13 @@ export default function NewAssignmentPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // Auth guard
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data: { user } }) => {
+      if (!user) router.push("/login");
+    });
+  }, [router]);
+
   // Load students
   useEffect(() => {
     const supabase = createClient();
@@ -90,7 +97,7 @@ export default function NewAssignmentPage() {
     setError("");
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) { router.push("/login"); return; }
 
     const { error: err } = await supabase.from("tracker_assignments").insert({
       teacher_id: user.id,
