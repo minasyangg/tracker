@@ -31,25 +31,34 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      // Sign in server-side to avoid client-side fetch header issues
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (authError) {
-      setError("Неверный email или пароль");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Неверный email или пароль");
+        setLoading(false);
+        return;
+      }
+
+      // Store session in supabase client (uses GET /user, not POST — no header issue)
+      const supabase = createClient();
+      await supabase.auth.setSession({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+      });
+
+      router.push(data.role === "student" ? "/student" : "/teacher");
+    } catch {
+      setError("Ошибка сети, попробуйте снова");
       setLoading(false);
-      return;
     }
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { setError("Ошибка авторизации"); setLoading(false); return; }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    router.push(profile?.role === "student" ? "/student" : "/teacher");
   }
 
   return (
